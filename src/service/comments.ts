@@ -8,11 +8,13 @@ export interface CommentWithId extends Comment {
 }
 
 export const getComments = async () => {
+    console.log('APIURL: ', import.meta.env.VITE_PUBLIC_API_URL)
+    console.log('APIKEY ',import.meta.env.VITE_PUBLIC_API_KEY)
     const response = await fetch('https://api.jsonbin.io/v3/b/677bcac7acd3cb34a8c4f07f', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'X-Master-Key': '$2a$10$HkiJNs3V9.Y.e5OQcDB3a.j/3IHqcrWWgneaevw.v0V0KQyD31jva'
+            'X-Access-Key': '$2a$10$uIQWMUySHCWOGpMNSxi0XeF56MC4FwW9/jD0nQA/jGJCYBiF/Y7mS'
         }
     }) 
 
@@ -36,7 +38,7 @@ export const postComment = async (comment: Comment) => {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
-            'X-Master-Key': '$2a$10$HkiJNs3V9.Y.e5OQcDB3a.j/3IHqcrWWgneaevw.v0V0KQyD31jva'
+            'X-Access-Key': '$2a$10$uIQWMUySHCWOGpMNSxi0XeF56MC4FwW9/jD0nQA/jGJCYBiF/Y7mS'
         },
         body: JSON.stringify(commentToSave)
     })
