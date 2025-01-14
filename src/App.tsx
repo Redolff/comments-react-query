@@ -2,8 +2,10 @@ import { Results } from './components/Results'
 import { FormInput, FormTextArea } from './components/Form'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { getComments, postComment, type CommentWithId } from './service/comments'
+import { useState } from 'react'
 
 const App = () => {
+  const [localError, setLocalError] = useState<string|null>(null)
   const { data, isLoading, error } = useQuery<CommentWithId[]>({
     queryKey: ['comments'], 
     queryFn: getComments
@@ -11,7 +13,7 @@ const App = () => {
 
   const queryClient = useQueryClient()
 
-  const { mutate, isPending } = useMutation({
+  const { mutate, isPending, isError } = useMutation({
     mutationFn: postComment,
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['comments'] })
@@ -25,9 +27,15 @@ const App = () => {
     const title = formData.get('title')?.toString() ?? ''
     const message = formData.get('message')?.toString() ?? ''
 
+    if(title === '' || message === ''){
+      setLocalError('Por favor, completa todos los datos antes de enviar.')
+      return;
+    }
+
     if(title !==  '' && message !== ''){
       mutate({ title, message })
     }
+    setLocalError(null)
   }
 
   return (
@@ -46,6 +54,11 @@ const App = () => {
 
             <FormInput />
             <FormTextArea />
+            {localError
+              ? <strong className='block p-2.5 text-white'> {localError} </strong>
+              : null
+            }
+            {isError && <strong className='p-2 m-2 text-white'> Ocurrio un error al enviar el comentario </strong>}
 
             <button
               disabled={isPending} 

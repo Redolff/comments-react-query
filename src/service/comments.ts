@@ -8,9 +8,7 @@ export interface CommentWithId extends Comment {
 }
 
 export const getComments = async () => {
-    console.log('APIURL: ', import.meta.env.VITE_PUBLIC_API_URL)
-    console.log('APIKEY ',import.meta.env.VITE_PUBLIC_API_KEY)
-    const response = await fetch('https://api.jsonbin.io/v3/b/677bcac7acd3cb34a8c4f07f', {
+    const response = await fetch('https://api.jsonbin.io/v3/b/6785f175e41b4d34e47717aa', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -29,12 +27,11 @@ export const getComments = async () => {
 
 export const postComment = async (comment: Comment) => {
     const comments = await getComments()
-
     const id = crypto.randomUUID()
     const newComment = { ...comment, id }
     const commentToSave = [ ...comments, newComment ]
 
-    const response = await fetch('https://api.jsonbin.io/v3/b/677bcac7acd3cb34a8c4f07f', {
+    const response = await fetch('https://api.jsonbin.io/v3/b/6785f175e41b4d34e47717aa', {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -48,4 +45,25 @@ export const postComment = async (comment: Comment) => {
     }
 
     return newComment
+}
+
+export const deleteComment = async (idComment: string) => {
+    const comments = await getComments()
+    const commentsToSave = comments.filter((x: CommentWithId) => x.id !== idComment)
+
+    const response = await fetch('https://api.jsonbin.io/v3/b/6785f175e41b4d34e47717aa', {
+        method: 'PUT',
+        headers: {
+            'Content-Type' : 'application/json',
+            'X-Access-Key': '$2a$10$uIQWMUySHCWOGpMNSxi0XeF56MC4FwW9/jD0nQA/jGJCYBiF/Y7mS'
+        },
+        body : JSON.stringify(commentsToSave)
+    })
+
+    if(response.ok) {
+        throw new Error('Failed to delete Comment: '+ idComment)
+    }
+
+    return commentsToSave
+    
 }
